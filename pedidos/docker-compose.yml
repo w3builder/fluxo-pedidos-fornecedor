@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14-alpine
+    container_name: revenda-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: revendasdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /data/postgres
+    volumes:
+      - postgres-data:/data/postgres
+    restart: unless-stopped
+    networks:
+      - revenda-network
+      
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: revenda-zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - revenda-network
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+    name: revenda-postgres-data
+
+networks:
+  revenda-network:
+    name: revenda-network
+    driver: bridge 
